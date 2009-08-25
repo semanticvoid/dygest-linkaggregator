@@ -39,4 +39,4 @@ do
 done
 
 # eliminate duplicate (user, rss) tuples
-sort ~/temp/user_rss | uniq > ~/temp/user_rss_temp && mv ~/temp/user_rss_temp ~/temp/user_rss
+sort ~/temp/user_rss | uniq > ~/temp/user_rss_temp && mv ~/temp/user_rss_temp ~/temp/user_rss	
