@@ -60,6 +60,7 @@ public class StatusFeedReader {
 
     public static void main(String[] args) {
         StatusFeedReader rdr = new StatusFeedReader();
-        rdr.read("http://twitter.com/statuses/user_timeline/874.rss");
+        LinkAggregator agg = new LinkAggregator();
+        agg.aggregate(rdr.read("http://twitter.com/statuses/user_timeline/874.rss"));
     }
 }
