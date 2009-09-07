@@ -131,6 +131,7 @@ public class Tweet implements IStorable {
         objAsMap.put("uri", uri);
         objAsMap.put("user", user);
         objAsMap.put("text", text);
+        objAsMap.put("links", links);
         objAsMap.put("time", time);
         objAsMap.put("day", day);
         objAsMap.put("hasLink", String.valueOf(hasLink));
