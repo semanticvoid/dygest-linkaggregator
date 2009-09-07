@@ -5,18 +5,24 @@
 
 package linkaggregator;
 
+import dygest.commons.db.simple.IStorable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  *
  * @author anand
  */
-public class Tweet {
+public class Tweet implements IStorable {
 
     private String uri;
     private String user;
     private String text;
-    private Date time;
+    private String day;
+    private String time;
+    private Date date;
 
     private boolean hasLink = false;
 
@@ -24,11 +30,20 @@ public class Tweet {
         this.uri = uri;
         this.user = user;
         this.text = text;
-        this.time = time;
+        this.date = time;
+        formatTime(time);
 
         if(text != null) {
             hasLink = text.matches(".*http://[a-zA-Z0-9]+.*");
         }
+    }
+
+    private void formatTime(Date t) {
+        SimpleDateFormat dayFormat = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hhmm");
+
+        day = dayFormat.format(t);
+        time = timeFormat.format(t);
     }
 
     /**
@@ -55,8 +70,22 @@ public class Tweet {
     /**
      * @return the time
      */
-    public Date getTime() {
+    public String getTime() {
         return time;
+    }
+
+    /**
+     * @return the day
+     */
+    public String getDay() {
+        return day;
+    }
+
+    /**
+     * @return the date
+     */
+    public Date getDate() {
+        return date;
     }
 
     /**
@@ -64,6 +93,28 @@ public class Tweet {
      */
     public boolean hasLink() {
         return hasLink;
+    }
+
+    public String getID() {
+        return uri;
+    }
+
+    public HashMap<String, String> toMap() {
+        HashMap<String, String> objAsMap = new HashMap<String, String>();
+
+        objAsMap.put("id", uri);
+        objAsMap.put("uri", uri);
+        objAsMap.put("user", user);
+        objAsMap.put("text", text);
+        objAsMap.put("time", time);
+        objAsMap.put("day", day);
+        objAsMap.put("hasLink", String.valueOf(hasLink));
+
+        return objAsMap;
+    }
+
+    public String toJSON() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
