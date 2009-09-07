@@ -6,10 +6,12 @@
 package linkaggregator;
 
 import dygest.commons.db.simple.IStorable;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -22,11 +24,13 @@ public class Tweet implements IStorable {
     private String text;
     private String day;
     private String time;
+    // links separated by ^A
+    private String links;
     private Date date;
 
     private boolean hasLink = false;
 
-    public Tweet(String uri, String user, String text, Date time) {
+    public Tweet(String uri, String user, String text, Date time, boolean resolve) {
         this.uri = uri;
         this.user = user;
         this.text = text;
@@ -35,7 +39,28 @@ public class Tweet implements IStorable {
 
         if(text != null) {
             hasLink = text.matches(".*http://[a-zA-Z0-9]+.*");
+            if(hasLink) {
+                extractUrls(text, resolve);
+            }
         }
+    }
+
+    private void extractUrls(String text, boolean resolve) {
+        StringBuffer links = new StringBuffer();
+        
+        Pattern pattern = Pattern.compile("http://[a-zA-Z0-9\\/&?=#+-_%~]+");
+        Matcher matcher = pattern.matcher(text);
+
+        while(matcher.find()) {
+            if(resolve) {
+                // @TODO resolve addresses
+            }
+            links.append(matcher.group());
+            links.append('\001');
+        }
+
+        System.out.println(links.toString());
+        this.links = links.toString();
     }
 
     private void formatTime(Date t) {

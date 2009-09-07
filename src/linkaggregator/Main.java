@@ -16,15 +16,10 @@ import java.util.List;
 public class Main {
 
     static StatusFeedReader rdr = new StatusFeedReader();
-    static LinkAggregator agg = new LinkAggregator();
 
-    public static void collectLinksFromFeed(String feedURL) {
+    public static void collectTweetsFromFeed(String feedURL) {
         List<Tweet> tweets = rdr.read(feedURL);
-        List<String> links = agg.aggregate(tweets);
 
-        for(String link : links) {
-            System.out.println(link);
-        }
     }
 
     public static void main(String[] args) {
@@ -42,7 +37,7 @@ public class Main {
             while((line = in.readLine()) != null) {
                 String[] tokens = line.split("[ \t]+");
                 if(tokens.length == 2) {
-                    collectLinksFromFeed(tokens[1]);
+                    collectTweetsFromFeed(tokens[1]);
                 }
             }
         } catch(Exception e) {
