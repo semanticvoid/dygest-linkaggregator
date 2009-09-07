@@ -47,7 +47,7 @@ public class StatusFeedReader {
             
             for(SyndEntryImpl entry : entries) {
                 String user = extractUser(entry.getUri());
-                Tweet t = new Tweet(entry.getUri(), user, entry.getDescription().getValue().replace(user + ": ", ""), entry.getPublishedDate());
+                Tweet t = new Tweet(entry.getUri(), user, entry.getDescription().getValue().replace(user + ": ", ""), entry.getPublishedDate(), false);
                 tweets.add(t);
             }
 
@@ -56,11 +56,5 @@ public class StatusFeedReader {
         }
 
         return tweets;
-    }
-
-    public static void main(String[] args) {
-        StatusFeedReader rdr = new StatusFeedReader();
-        LinkAggregator agg = new LinkAggregator();
-        agg.aggregate(rdr.read("http://twitter.com/statuses/user_timeline/874.rss"));
     }
 }
