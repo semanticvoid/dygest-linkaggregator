@@ -19,7 +19,7 @@ public class LinkAggregator {
     private List<String> extractUrls(String text, boolean resolve) {
         ArrayList<String> urls = new ArrayList<String>();
 
-        Pattern pattern = Pattern.compile("http://[a-zA-Z\\/&?=#+-_%~]+");
+        Pattern pattern = Pattern.compile("http://[a-zA-Z0-9\\/&?=#+-_%~]+");
         Matcher matcher = pattern.matcher(text);
 
         while(matcher.find()) {
@@ -37,7 +37,7 @@ public class LinkAggregator {
 
         for(Tweet t : tweets) {
             if(t.hasLink()) {
-                extractUrls(t.getText(), true);
+                urls.addAll(extractUrls(t.getText(), true));
             }
         }
 
