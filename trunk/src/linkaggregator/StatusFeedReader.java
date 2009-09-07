@@ -47,7 +47,7 @@ public class StatusFeedReader {
             
             for(SyndEntryImpl entry : entries) {
                 String user = extractUser(entry.getUri());
-                Tweet t = new Tweet(entry.getUri(), user, entry.getDescription().getValue().replace(user + ": ", ""), entry.getPublishedDate(), false);
+                Tweet t = new Tweet(entry.getUri(), user, entry.getDescription().getValue().replace(user + ": ", ""), entry.getPublishedDate(), true);
                 tweets.add(t);
             }
 

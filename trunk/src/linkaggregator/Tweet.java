@@ -2,16 +2,22 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package linkaggregator;
 
 import dygest.commons.db.simple.IStorable;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 
 /**
  *
@@ -25,9 +31,8 @@ public class Tweet implements IStorable {
     private String day;
     private String time;
     // links separated by ^A
-    private String links;
+    private String links = "";
     private Date date;
-
     private boolean hasLink = false;
 
     public Tweet(String uri, String user, String text, Date time, boolean resolve) {
@@ -37,9 +42,9 @@ public class Tweet implements IStorable {
         this.date = time;
         formatTime(time);
 
-        if(text != null) {
+        if (text != null) {
             hasLink = text.matches(".*http://[a-zA-Z0-9]+.*");
-            if(hasLink) {
+            if (hasLink) {
                 extractUrls(text, resolve);
             }
         }
@@ -47,12 +52,12 @@ public class Tweet implements IStorable {
 
     private void extractUrls(String text, boolean resolve) {
         StringBuffer links = new StringBuffer();
-        
+
         Pattern pattern = Pattern.compile("http://[a-zA-Z0-9\\/&?=#+-_%~]+");
         Matcher matcher = pattern.matcher(text);
 
-        while(matcher.find()) {
-            if(resolve) {
+        while (matcher.find()) {
+            if (resolve) {
                 // @TODO resolve addresses
             }
             links.append(matcher.group());
@@ -61,6 +66,45 @@ public class Tweet implements IStorable {
 
         System.out.println(links.toString());
         this.links = links.toString();
+    }
+
+    private String resolveLink(String url) {
+        String resolved = url;
+        HttpClient client = new HttpClient();
+        GetMethod method = new GetMethod(url);
+
+        // Provide custom retry handler is necessary
+        method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
+                new DefaultHttpMethodRetryHandler(3, false));
+
+        try {
+            // Execute the method.
+            int statusCode = client.executeMethod(method);
+
+            if(statusCode == HttpStatus.SC_MOVED_PERMANENTLY || statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
+                String redirectLocation;
+                Header locationHeader = method.getResponseHeader("location");
+                if(locationHeader != null) {
+                    redirectLocation = locationHeader.getValue();
+                    return resolveLink(redirectLocation);
+                } else {
+                    // The response is invalid and did not provide the new location for
+                    // the resource.  Report an error or possibly handle the response
+                    // like a 404 Not Found error.
+                    return resolved;
+                }
+            }
+        } catch (HttpException e) {
+            System.err.println("Fatal protocol violation: " + e.getMessage());
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Fatal transport error: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            method.releaseConnection();
+        }
+
+        return resolved;
     }
 
     private void formatTime(Date t) {
@@ -142,5 +186,4 @@ public class Tweet implements IStorable {
     public String toJSON() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
 }
