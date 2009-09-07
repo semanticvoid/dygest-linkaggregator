@@ -5,6 +5,7 @@
 
 package linkaggregator;
 
+import dygest.commons.db.simple.DocumentDB;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.List;
@@ -16,10 +17,15 @@ import java.util.List;
 public class Main {
 
     static StatusFeedReader rdr = new StatusFeedReader();
+    static DocumentDB db = new DocumentDB();
 
     public static void collectTweetsFromFeed(String feedURL) {
         List<Tweet> tweets = rdr.read(feedURL);
 
+        // store in simpledb
+        for(Tweet t : tweets) {
+            db.put("informd", t);
+        }
     }
 
     public static void main(String[] args) {
