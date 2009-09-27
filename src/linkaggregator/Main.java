@@ -5,6 +5,7 @@
 
 package linkaggregator;
 
+import dygest.commons.data.Tweet;
 import dygest.commons.db.simple.DocumentDB;
 import java.io.BufferedReader;
 import java.io.FileReader;
