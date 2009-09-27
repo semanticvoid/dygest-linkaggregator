@@ -5,9 +5,11 @@
 
 package linkaggregator;
 
+import dygest.commons.data.Tweet;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
+import dygest.commons.db.simple.DocumentDB;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -18,6 +20,8 @@ import java.util.List;
  * @author anand
  */
 public class StatusFeedReader {
+
+    private static DocumentDB db = new DocumentDB();
 
     private SyndFeed getFeed(String url) throws Exception {
         URL feedUrl = new URL(url);
